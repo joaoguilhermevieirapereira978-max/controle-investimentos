@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Investimentos e Gastos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #1e40af;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background: #f1f5f9;
+    }
+    .total {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Controle de Investimentos e Gastos</h1>
+
+    <div class="form-group">
+      <label>Tipo</label>
+      <select id="tipo">
+        <option value="Gasto">Gasto</option>
+        <option value="Investimento">Investimento</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Descrição (ex: Luz, Energia Solar, Compra)</label>
+      <input type="text" id="descricao" />
+    </div>
+
+    <div class="form-group">
+      <label>Valor (R$)</label>
+      <input type="number" id="valor" />
+    </div>
+
+    <button onclick="adicionar()">Adicionar</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Descrição</th>
+          <th>Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+    </table>
+
+    <div class="total" id="total"></div>
+  </div>
+
+  <script>
+    let total = 0;
+
+    function adicionar() {
+      const tipo = document.getElementById('tipo').value;
+      const descricao = document.getElementById('descricao').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+
+      if (!descricao || isNaN(valor)) {
+        alert('Preencha todos os campos');
+        return;
+      }
+
+      const lista = document.getElementById('lista');
+      const row = document.createElement('tr');
+
+      row.innerHTML = `
+        <td>${tipo}</td>
+        <td>${descricao}</td>
+        <td>R$ ${valor.toFixed(2)}</td>
+      `;
+
+      lista.appendChild(row);
+
+      if (tipo === 'Gasto') {
+        total -= valor;
+      } else {
+        total += valor;
+      }
+
+      document.getElementById('total').innerText = `Saldo total: R$ ${total.toFixed(2)}`;
+
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+    }
+  </script>
+</body>
+</html>
