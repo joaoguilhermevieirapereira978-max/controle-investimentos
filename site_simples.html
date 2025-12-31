@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Futebol Challenge Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(#0a5c2d, #043d1c);
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .game {
+      background: #0f7a3a;
+      width: 360px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    canvas {
+      background: #1faa59;
+      border-radius: 10px;
+      margin: 15px 0;
+      border: 3px solid white;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      background: #ffffff;
+      color: #0f7a3a;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e6e6e6;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game">
+  <h1>⚽ Futebol Challenge</h1>
+  <p>Marque o máximo de gols possível!</p>
+
+  <div class="info">
+    <span>Gols: <b id="score">0</b></span>
+    <span>Tempo: <b id="time">30</b>s</span>
+  </div>
+
+  <canvas id="field" width="300" height="400"></canvas>
+
+  <button onclick="startGame()">Iniciar Jogo</button>
+</div>
+
+<script>
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+
+  let ball = { x: 150, y: 300, r: 10 };
+  let goal = { x: 80, y: 20, w: 140, h: 20 };
+
+  let score = 0;
+  let time = 30;
+  let playing = false;
+  let interval;
+
+  function drawField() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Gol
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
+
+    // Bola
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  }
+
+  canvas.addEventListener('click', (e) => {
+    if (!playing) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    const dx = clickX - ball.x;
+    const dy = clickY - ball.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < ball.r + 10) {
+      shoot();
+    }
+  });
+
+  function shoot() {
+    ball.y -= 40;
+
+    if (ball.y <= goal.y + goal.h) {
+      score++;
+      document.getElementById('score').innerText = score;
+      resetBall();
+    }
+  }
+
+  function resetBall() {
+    ball.y = 300;
+    ball.x = Math.random() * 260 + 20;
+  }
+
+  function startGame() {
+    score = 0;
+    time = 30;
+    playing = true;
+    document.getElementById('score').innerText = score;
+    document.getElementById('time').innerText = time;
+
+    clearInterval(interval);
+    interval = setInterval(() => {
+      time--;
+      document.getElementById('time').innerText = time;
+      if (time <= 0) endGame();
+    }, 1000);
+
+    gameLoop();
+  }
+
+  function endGame() {
+    playing = false;
+    clearInterval(interval);
+    alert('Fim de jogo! Você marcou ' + score + ' gols ⚽');
+  }
+
+  function gameLoop() {
+    if (!playing) return;
+    drawField();
+    requestAnimationFrame(gameLoop);
+  }
+
+  drawField();
+</script>
+
+</body>
+</html>
